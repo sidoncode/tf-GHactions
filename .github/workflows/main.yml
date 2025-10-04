@@ -37,6 +37,7 @@ jobs:
         run: |
           terraform workspace new $TF_WORKSPACE || terraform workspace select $TF_WORKSPACE
 
+
       - name: Validate Terraform
         run: terraform validate
 
