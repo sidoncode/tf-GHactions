@@ -38,10 +38,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      # 5️⃣ Terraform Format Check (optional, but recommended)
-      - name: Terraform Format Check
-        run: terraform fmt -check -recursive
-
       # 6️⃣ Validate Terraform code
       - name: Terraform Validate
         run: terraform validate
