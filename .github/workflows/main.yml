@@ -10,19 +10,23 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
     env:
-      TF_WORKSPACE: ${{ github.ref_name }}
       AWS_REGION: us-east-1
+      TF_WORKSPACE: ${{ github.ref_name }}  # Branch name maps to workspace
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.8.5
 
+      # 3️⃣ Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,20 +34,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # 4️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init
 
-      - name: Select/Create Workspace
-        run: |
-          terraform workspace new $TF_WORKSPACE || terraform workspace select $TF_WORKSPACE
+      # 5️⃣ Terraform Format Check (optional, but recommended)
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
-
-      - name: Validate Terraform
+      # 6️⃣ Validate Terraform code
+      - name: Terraform Validate
         run: terraform validate
 
+      # 7️⃣ Terraform Plan
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      - name: Terraform Apply (main branch only)
+      # 8️⃣ Terraform Apply (only for main branch / prod)
+      - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
