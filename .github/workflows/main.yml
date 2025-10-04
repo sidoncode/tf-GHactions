@@ -16,17 +16,17 @@ jobs:
       TF_WORKSPACE: ${{ github.ref_name }}  # Branch name maps to workspace
 
     steps:
-      # 1️⃣ Checkout repo
+      # Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Terraform
+      # Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.8.5
 
-      # 3️⃣ Configure AWS credentials
+      # Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -34,19 +34,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # 4️⃣ Terraform Init
+      # Terraform Init
       - name: Terraform Init
         run: terraform init
 
-      # 6️⃣ Validate Terraform code
+      # Validate Terraform code
       - name: Terraform Validate
         run: terraform validate
 
-      # 7️⃣ Terraform Plan
+      # Terraform Plan
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # 8️⃣ Terraform Apply (only for main branch / prod)
+      # Terraform Apply (only for main branch / prod)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
